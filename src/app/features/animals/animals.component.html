@@ -1,0 +1,11 @@
+<input [(ngModel)]="newAnimal" placeholder="Animal name" />
+<button (click)="add()">Add Animal</button>
+
+<ul>
+    @for (animal of animals$ | async; track animal) {
+    <li>
+        {{ animal }}
+        <button (click)="remove(animal)">Delete</button>
+    </li>
+    }
+</ul>

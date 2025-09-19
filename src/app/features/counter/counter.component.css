@@ -1,0 +1,27 @@
+.counter-controls,
+.increment-by {
+  margin: 1rem 0;
+  display: flex;
+  gap: 0.5rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+input[type="number"] {
+  padding: 0.5rem;
+  width: 120px;
+}
+
+input[type="text"] {
+  margin: 1rem 0;
+  display: flex;
+  gap: 0.5rem;
+}

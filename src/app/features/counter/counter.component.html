@@ -1,0 +1,13 @@
+<h1>Counter</h1>
+<p>Current Count: {{ count$ | async }}</p>
+<div class="counter-controls">
+    <button (click)="increment()">Increment</button>
+    <button (click)="decrement()">Decrement</button>
+    <button (click)="reset()">Reset</button>
+</div>
+<div class="increment-by">
+    <input [(ngModel)]="addAmount" type="number" placeholder="Enter amount" required min="0" />
+    <button (click)="incrementBy()" [disabled]="!addAmount">
+        Increment By
+    </button>
+</div>
