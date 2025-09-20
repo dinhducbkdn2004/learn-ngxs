@@ -1,4 +1,4 @@
-import { UserService } from './../../core/services/user.service';
+import { UserService } from '../../core/services/api.service';
 import { inject, Injectable } from '@angular/core';
 import { State, Action, Selector, StateContext } from '@ngxs/store';
 import { FetchUsers, SearchUsers } from './users.actions';
@@ -51,7 +51,7 @@ export class UsersState {
       })
     );
   }
-  
+
   @Action(SearchUsers)
   search(ctx: StateContext<UsersStateModel>, action: SearchUsers) {
     ctx.patchState({ searchKeyword: action.keyword });

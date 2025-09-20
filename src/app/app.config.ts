@@ -10,6 +10,8 @@ import { TodoState } from './store/todo/todo.state';
 import { withNgxsLoggerPlugin } from '@ngxs/logger-plugin';
 import { UsersState } from './store/users/users.state';
 import { provideHttpClient } from '@angular/common/http';
+import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
+import { AuthState } from './store/auth/auth.state';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,9 +19,10 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     provideStore(
-      [AnimalsState, CounterState, TodoState, UsersState],
+      [AnimalsState, CounterState, TodoState, UsersState, AuthState],
       withNgxsReduxDevtoolsPlugin(),
       withNgxsLoggerPlugin()
     ),
+    withNgxsStoragePlugin({ keys: ['auth'] }),
   ],
 };

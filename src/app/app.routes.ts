@@ -25,7 +25,11 @@ export const routes: Routes = [
     path: 'users',
     loadComponent: () =>
       import('./features/users/users.component').then((m) => m.UsersComponent),
-
+  },
+  {
+    path: 'auth',
+    loadComponent: () =>
+      import('./features/auth/auth.component').then((m) => m.AuthComponent),
   },
   { path: '**', redirectTo: 'counter' },
 ];
