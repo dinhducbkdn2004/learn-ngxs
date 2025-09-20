@@ -5,9 +5,9 @@ import { User } from '../../store/users/users.state';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private apiUrl = 'https://jsonplaceholder.typicode.com/users';
+  private readonly apiUrl = 'https://jsonplaceholder.typicode.com/users';
 
-  private httpClient = inject(HttpClient);
+  private readonly httpClient = inject(HttpClient);
 
   getUsers(): Observable<User[]> {
     return this.httpClient.get<User[]>(this.apiUrl);

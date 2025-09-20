@@ -17,7 +17,7 @@ export class TodosComponent {
   todos$!: Observable<Todo[]>;
   newTodoTitle = '';
 
-  constructor(private store: Store) {
+  constructor(private readonly store: Store) {
     this.todos$ = this.store.select(TodoState.getState);
   }
 
