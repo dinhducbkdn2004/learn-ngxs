@@ -19,10 +19,3 @@ export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
 }
-
-export interface AuthStateModel {
-  user: User | null;
-  accessToken: string | null;
-  refreshToken: string | null;
-  isAuthenticated: boolean;
-}

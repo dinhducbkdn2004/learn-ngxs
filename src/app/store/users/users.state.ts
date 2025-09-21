@@ -1,4 +1,4 @@
-import { UserService } from '../../core/services/api.service';
+import { ApiService } from './../../core/services/api.service';
 import { inject, Injectable } from '@angular/core';
 import { State, Action, Selector, StateContext } from '@ngxs/store';
 import { FetchUsers, SearchUsers } from './users.actions';
@@ -24,7 +24,7 @@ export interface UsersStateModel {
 })
 @Injectable()
 export class UsersState {
-  private userService = inject(UserService);
+  private apiService = inject(ApiService);
   @Selector()
   static getUsers(state: UsersStateModel) {
     console.log('state.users', state.users);
@@ -37,15 +37,17 @@ export class UsersState {
     return state.users.length;
   }
 
-   @Selector()
+  @Selector()
   static filteredUsers(state: UsersStateModel) {
     const keyword = state.searchKeyword.toLowerCase();
-    return state.users.filter(user => user.name.toLowerCase().includes(keyword));
+    return state.users.filter((user) =>
+      user.name.toLowerCase().includes(keyword)
+    );
   }
 
   @Action(FetchUsers)
   fetchUsers(ctx: StateContext<UsersStateModel>) {
-    return this.userService.getUsers().pipe(
+    return this.apiService.getUsers().pipe(
       tap((users) => {
         ctx.patchState({ users });
       })
@@ -56,5 +58,4 @@ export class UsersState {
   search(ctx: StateContext<UsersStateModel>, action: SearchUsers) {
     ctx.patchState({ searchKeyword: action.keyword });
   }
-
 }

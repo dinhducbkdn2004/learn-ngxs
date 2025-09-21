@@ -12,6 +12,8 @@ import { UsersState } from './store/users/users.state';
 import { provideHttpClient } from '@angular/common/http';
 import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
 import { AuthState } from './store/auth/auth.state';
+import { CartState } from './store/cart/cart.state';
+import { ProductState } from './store/product/product.state';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +21,15 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     provideStore(
-      [AnimalsState, CounterState, TodoState, UsersState, AuthState],
+      [
+        AnimalsState,
+        CounterState,
+        TodoState,
+        UsersState,
+        AuthState,
+        CartState,
+        ProductState,
+      ],
       withNgxsReduxDevtoolsPlugin(),
       withNgxsLoggerPlugin()
     ),

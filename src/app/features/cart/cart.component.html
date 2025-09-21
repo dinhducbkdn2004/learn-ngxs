@@ -1,0 +1,22 @@
+<h2>Products</h2>
+<ul>
+  @for(product of products$ | async; track product.id) {
+    <li>
+      {{ product.title }} - ${{ product.price }}
+      <button (click)="addToCart(product)">Add to Cart</button>
+    </li>
+  }
+</ul>
+
+<h2>Cart</h2>
+<ul>
+  @for(item of cart$ | async; track item.id) {
+    <li>
+      {{ item.name }} (x{{ item.qty }}) - ${{ item.price * item.qty }}
+      <button (click)="removeFromCart(item.id)">Remove</button>
+    </li>
+  }
+</ul>
+<p>Total Items: {{ totalItems$ | async }}</p>
+<p>Total Price: {{ totalPrice$ | async }}</p>
+<button (click)="clearCart()">Clear Cart</button>

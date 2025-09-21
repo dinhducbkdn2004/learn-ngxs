@@ -1,13 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { State, Action, Selector, StateContext } from '@ngxs/store';
 import { Login, Logout } from './auth.actions';
-import {
-  AuthStateModel,
-  AuthResponse,
-  User,
-} from '../../core/models/auth.model';
-import { UserService } from '../../core/services/api.service';
+import { AuthResponse, User } from '../../core/models/auth.model';
+import { ApiService } from '../../core/services/api.service';
 import { tap } from 'rxjs';
+
+export interface AuthStateModel {
+  user: User | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  isAuthenticated: boolean;
+}
 
 @State<AuthStateModel>({
   name: 'auth',
@@ -20,7 +23,7 @@ import { tap } from 'rxjs';
 })
 @Injectable()
 export class AuthState {
-  private userService = inject(UserService);
+  private apiService = inject(ApiService);
   @Selector()
   static isAuthenticated(state: AuthStateModel): boolean {
     return state.isAuthenticated;
@@ -38,7 +41,7 @@ export class AuthState {
 
   @Action(Login)
   login(ctx: StateContext<AuthStateModel>, action: Login) {
-    return this.userService.login(action.username, action.password).pipe(
+    return this.apiService.login(action.username, action.password).pipe(
       tap((response: AuthResponse) => {
         ctx.patchState({
           user: {
