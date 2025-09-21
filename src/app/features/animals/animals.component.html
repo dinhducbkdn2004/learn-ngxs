@@ -1,11 +1,20 @@
-<input [(ngModel)]="newAnimal" placeholder="Animal name" />
-<button (click)="add()">Add Animal</button>
-
-<ul>
-    @for (animal of animals$ | async; track animal) {
-    <li>
-        {{ animal }}
-        <button (click)="remove(animal)">Delete</button>
-    </li>
-    }
-</ul>
+<div class="min-h-screen bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-3xl font-bold mb-6 text-gray-800">Animals</h2>
+        <div class="flex mb-6">
+            <input [(ngModel)]="newAnimal" placeholder="Animal name"
+                class="flex-1 border border-gray-300 rounded-l px-3 py-2" />
+            <button (click)="add()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r">Add
+                Animal</button>
+        </div>
+        <ul class="space-y-2">
+            @for (animal of animals$ | async; track animal) {
+            <li class="flex justify-between items-center bg-gray-50 p-3 rounded">
+                <span class="text-gray-700">{{ animal }}</span>
+                <button (click)="remove(animal)"
+                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">Delete</button>
+            </li>
+            }
+        </ul>
+    </div>
+</div>

@@ -1,18 +1,26 @@
-<h2>Login</h2>
-
-<form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-    <div>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" [(ngModel)]="username" required />
+<div class="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <h2 class="text-3xl font-bold text-center mb-6 text-gray-800">Login</h2>
+        <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="space-y-4">
+            <div>
+                <label for="username" class="block text-gray-700 font-semibold mb-2">Username:</label>
+                <input type="text" id="username" name="username" [(ngModel)]="username" required
+                    class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div>
+                <label for="password" class="block text-gray-700 font-semibold mb-2">Password:</label>
+                <input type="password" id="password" name="password" [(ngModel)]="password" required
+                    class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <button type="submit" [disabled]="!loginForm.valid"
+                class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50">Login</button>
+        </form>
+        @if(isAuthenticated$ | async) {
+        <div class="mt-6 text-center">
+            <h3 class="text-green-600 font-semibold mb-4">You are logged in</h3>
+            <button (click)="logout()"
+                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Logout</button>
+        </div>
+        }
     </div>
-    <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" [(ngModel)]="password" required />
-    </div>
-    <button type="submit" [disabled]="!loginForm.form.valid">Login</button>
-</form>
-
-<div *ngIf="isAuthenticated$ | async">
-    <h3>Bạn đã đăng nhập!</h3>
-    <button (click)="logout()">Logout</button>
 </div>
