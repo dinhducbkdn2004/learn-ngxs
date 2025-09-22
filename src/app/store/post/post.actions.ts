@@ -1,5 +1,11 @@
-export class LoadPosts {
+export class LoadPostsByUserId {
   static readonly type = '[Posts] Load Posts';
+  constructor(public userId: number) {}
+}
+
+export class LoadPostsPaginated {
+  static readonly type = '[Post] Load Posts Paginated';
+  constructor(public payload: { limit: number; skip: number; select?: string }) {}
 }
 
 export class AddPost {
@@ -21,14 +27,4 @@ export class UpdatePost {
 export class DeletePost {
   static readonly type = '[Posts] Delete Post';
   constructor(public id: number) {}
-}
-
-export class LikePost {
-  static readonly type = '[Posts] Like Post';
-  constructor(public id: number, public userId: number) {}
-}
-
-export class DislikePost {
-  static readonly type = '[Posts] Dislike Post';
-  constructor(public id: number, public userId: number) {}
 }

@@ -29,20 +29,40 @@ export class ApiService {
     );
   }
 
-
-  getPosts(): Observable<{ posts: Post[] }> {
+  getPostsByUserId(userId: number): Observable<{ posts: Post[] }> {
     return this.httpClient.get<{ posts: Post[] }>(
-      `${this.apiDummyUrl}/posts`
+      `${this.apiDummyUrl}/posts/user/${userId}`
     );
   }
 
+  getAllPosts(params: {
+    limit?: number;
+    skip?: number;
+    select?: string;
+  }): Observable<{
+    posts: Post[];
+    total: number;
+    skip: number;
+    limit: number;
+  }> {
+    const query = new URLSearchParams();
+    if (params.limit !== undefined)
+      query.append('limit', params.limit.toString());
+    if (params.skip !== undefined) query.append('skip', params.skip.toString());
+    if (params.select) query.append('select', params.select);
+    return this.httpClient.get<{
+      posts: Post[];
+      total: number;
+      skip: number;
+      limit: number;
+    }>(`${this.apiDummyUrl}/posts?${query.toString()}`);
+  }
+
   addPost(post: Partial<Post>, userId: number): Observable<Post> {
-    return this.httpClient.post<Post>(`${this.apiDummyUrl}/posts/add`, 
-      {
-        ...post,
-        userId,
-      }
-    );
+    return this.httpClient.post<Post>(`${this.apiDummyUrl}/posts/add`, {
+      ...post,
+      userId,
+    });
   }
 
   updatePost(id: number, post: Partial<Post>): Observable<Post> {

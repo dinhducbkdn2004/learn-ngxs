@@ -9,8 +9,4 @@ export interface Post {
   };
   views: number;
   userId: number;
-  likedByUsers?: number[];
-  dislikedByUsers?: number[];
-  isDeleted?: boolean;
-  deletedOn?: string;
 }

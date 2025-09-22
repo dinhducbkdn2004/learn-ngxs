@@ -5,24 +5,21 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { NgxsFormDirective } from '@ngxs/form-plugin';
 import { Store } from '@ngxs/store';
 import { PostState } from '../../store/post/post.state';
 import { AuthState } from '../../store/auth/auth.state';
 import {
-  LoadPosts,
   AddPost,
   UpdatePost,
   DeletePost,
-  LikePost,
-  DislikePost,
+  LoadPostsPaginated,
 } from '../../store/post/post.actions';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { take } from 'rxjs';
 
 @Component({
   selector: 'app-postform',
-  imports: [ReactiveFormsModule, NgxsFormDirective, AsyncPipe, CommonModule],
+  imports: [ReactiveFormsModule, AsyncPipe, CommonModule],
   templateUrl: './postform.component.html',
   styleUrl: './postform.component.css',
 })
@@ -32,6 +29,11 @@ export class PostformComponent implements OnInit {
 
   posts$ = this.store.select(PostState.posts);
   currentUser$ = this.store.select(AuthState.user);
+  total$ = this.store.select(PostState.total);
+
+  currentPage = signal<number>(1);
+  pageSize = signal<number>(5);
+  totalPages = signal<number>(0);
 
   postForm: FormGroup = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(3)]],
@@ -39,62 +41,51 @@ export class PostformComponent implements OnInit {
     tags: [''],
   });
 
-  // State cho chế độ edit
   editingPost = signal<number | null>(null);
   isEditing = signal<boolean>(false);
 
   ngOnInit() {
-    this.store.dispatch(new LoadPosts());
+    this.loadPosts();
+    this.total$.subscribe((total) =>
+      this.totalPages.set(Math.ceil(total / this.pageSize()))
+    );
+  }
+
+  loadPosts() {
+    const skip = (this.currentPage() - 1) * this.pageSize();
+    this.store.dispatch(
+      new LoadPostsPaginated({
+        limit: this.pageSize(),
+        skip,
+        select: 'id,title,body,tags,reactions,views,userId',
+      })
+    );
   }
 
   onSubmit() {
-    if (this.postForm.valid) {
-      const formValue = this.postForm.value;
+    if (!this.postForm.valid) return;
 
-      const tags = formValue.tags
-        ? formValue.tags
-            .split(',')
-            .map((tag: string) => tag.trim())
-            .filter((tag: string) => tag)
-        : [];
+    const { title, body, tags: tagsStr } = this.postForm.value;
+    const tags = tagsStr
+      ? tagsStr
+          .split(',')
+          .map((tag: string) => tag.trim())
+          .filter(Boolean)
+      : [];
+    const postData = { title, body, tags };
 
-      const postData = {
-        title: formValue.title,
-        body: formValue.body,
-        tags: tags,
-      };
-
-      if (this.isEditing()) {
-        // Update existing post
-        const postId = this.editingPost();
-        if (postId) {
-          this.store.dispatch(new UpdatePost(postId, postData));
-          this.cancelEdit();
-        }
-      } else {
-        // Add new post
-        this.currentUser$.pipe(take(1)).subscribe((user) => {
-          const userId = user?.id || 1;
-          this.store.dispatch(new AddPost(postData, userId));
-        });
+    if (this.isEditing()) {
+      const postId = this.editingPost();
+      if (postId) {
+        this.store.dispatch(new UpdatePost(postId, postData));
+        this.cancelEdit();
       }
-
-      this.postForm.reset();
+    } else {
+      this.currentUser$.pipe(take(1)).subscribe((user) => {
+        this.store.dispatch(new AddPost(postData, user?.id || 1));
+      });
     }
-  }
-
-  likePost(id: number) {
-    this.currentUser$.pipe(take(1)).subscribe((user) => {
-      const userId = user?.id || 1;
-      this.store.dispatch(new LikePost(id, userId));
-    });
-  }
-
-  dislikePost(id: number) {
-    this.currentUser$.pipe(take(1)).subscribe((user) => {
-      const userId = user?.id || 1;
-      this.store.dispatch(new DislikePost(id, userId));
-    });
+    this.postForm.reset();
   }
 
   deletePost(id: number) {
@@ -104,8 +95,6 @@ export class PostformComponent implements OnInit {
   editPost(post: any) {
     this.editingPost.set(post.id);
     this.isEditing.set(true);
-    
-    // Fill form với data của post hiện tại
     this.postForm.patchValue({
       title: post.title,
       body: post.body,
@@ -119,21 +108,17 @@ export class PostformComponent implements OnInit {
     this.postForm.reset();
   }
 
-  isLikedByCurrentUser(post: any): boolean {
-    const currentUserId = this.getCurrentUserId();
-    return post.likedByUsers?.includes(currentUserId) || false;
+  nextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update((p) => p + 1);
+      this.loadPosts();
+    }
   }
 
-  isDislikedByCurrentUser(post: any): boolean {
-    const currentUserId = this.getCurrentUserId();
-    return post.dislikedByUsers?.includes(currentUserId) || false;
-  }
-
-  private getCurrentUserId(): number {
-    let userId = 1;
-    this.currentUser$.pipe(take(1)).subscribe((user) => {
-      userId = user?.id || 1;
-    });
-    return userId;
+  previousPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.update((p) => p - 1);
+      this.loadPosts();
+    }
   }
 }

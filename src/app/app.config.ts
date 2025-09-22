@@ -36,6 +36,6 @@ export const appConfig: ApplicationConfig = {
       withNgxsLoggerPlugin(),
       withNgxsFormPlugin()
     ),
-    withNgxsStoragePlugin({ keys: ['auth', 'cart', 'todo', 'counter'] }),
+    withNgxsStoragePlugin({ keys: ['auth', 'cart', 'todo', 'counter', 'post'] }),
   ],
 };
