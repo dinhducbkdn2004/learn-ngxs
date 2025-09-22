@@ -1,0 +1,109 @@
+<div class="min-h-screen bg-white p-6">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white border border-gray-200 rounded p-6 mb-8">
+            <h1 class="text-2xl font-bold mb-6 text-gray-800">
+                {{ isEditing() ? 'Edit Post' : 'Create New Post' }}
+            </h1>
+
+            <form [formGroup]="postForm" ngxsForm="postForm" (ngSubmit)="onSubmit()">
+                <div class="mb-4">
+                    <label for="title" class="block text-gray-700 font-semibold mb-2">Title:</label>
+                    <input type="text" id="title" formControlName="title"
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    @if (postForm.controls['title'].errors && postForm.controls['title'].touched) {
+                    <div class="text-red-500 text-sm mt-1">
+                        @if (postForm.controls['title'].errors['required']) {
+                        <span>Title is required</span>
+                        }
+                        @if (postForm.controls['title'].errors['minlength']) {
+                        <span>Title must be at least 3 characters</span>
+                        }
+                    </div>
+                    }
+                </div>
+
+                <div class="mb-4">
+                    <label for="body" class="block text-gray-700 font-semibold mb-2">Content:</label>
+                    <textarea id="body" formControlName="body" rows="5"
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    @if (postForm.controls['body'].errors && postForm.controls['body'].touched) {
+                    <div class="text-red-500 text-sm mt-1">
+                        @if (postForm.controls['body'].errors['required']) {
+                        <span>Content is required</span>
+                        }
+                        @if (postForm.controls['body'].errors['minlength']) {
+                        <span>Content must be at least 10 characters</span>
+                        }
+                    </div>
+                    }
+                </div>
+
+                <div class="mb-4">
+                    <label for="tags" class="block text-gray-700 font-semibold mb-2">Tags:</label>
+                    <input type="text" id="tags" formControlName="tags" placeholder="e.g. tech, programming, web"
+                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+
+                <div class="flex space-x-2">
+                    <button type="submit" [disabled]="postForm.invalid"
+                        class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed">
+                        {{ isEditing() ? 'Update Post' : 'Create Post' }}
+                    </button>
+                    @if (isEditing()) {
+                    <button type="button" (click)="cancelEdit()"
+                        class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
+                        Cancel
+                    </button>
+                    }
+                </div>
+            </form>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded p-6">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Posts</h2>
+            <div class="space-y-4">
+                @for (post of posts$ | async; track post.id) {
+                <div class="border border-gray-200 rounded p-4"
+                    [class]="post.isDeleted ? 'bg-red-50 opacity-60' : 'bg-gray-50'">
+                    @if (post.isDeleted) {
+                    <div class="mb-2 text-red-600 text-sm font-semibold">
+                        🗑️ DELETED - {{ post.deletedOn | date:'short' }}
+                    </div>
+                    }
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900">{{ post.title }}</h3>
+                    <p class="text-gray-700 mb-3">{{ post.body }}</p>
+                    <div class="mb-3">
+                        <span class="text-sm text-gray-500">Tags: </span>
+                        @for (tag of post.tags; track tag) {
+                        <span class="inline-block bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs mr-1">{{ tag
+                            }}</span>
+                        }
+                    </div>
+                    @if (!post.isDeleted) {
+                    <div class="flex items-center space-x-3">
+                        <button (click)="likePost(post.id)"
+                            [class]="isLikedByCurrentUser(post) ? 'bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm' : 'bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm'">
+                            👍 {{ post.reactions.likes }}
+                        </button>
+                        <button (click)="dislikePost(post.id)"
+                            [class]="isDislikedByCurrentUser(post) ? 'bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm' : 'bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm'">
+                            👎 {{ post.reactions.dislikes }}
+                        </button>
+                        <button (click)="editPost(post)"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
+                            Edit
+                        </button>
+                        <button (click)="deletePost(post.id)"
+                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                            Delete
+                        </button>
+                    </div>
+                    }
+                </div>
+                } @empty {
+                <p class="text-gray-500 text-center py-8">No posts yet. Create your first post!</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../../store/users/users.state';
 import { Product } from '../models/product.model';
+import { Post } from '../models/post.model';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -26,5 +27,29 @@ export class ApiService {
     return this.httpClient.get<{ products: Product[] }>(
       `${this.apiDummyUrl}/products`
     );
+  }
+
+
+  getPosts(): Observable<{ posts: Post[] }> {
+    return this.httpClient.get<{ posts: Post[] }>(
+      `${this.apiDummyUrl}/posts`
+    );
+  }
+
+  addPost(post: Partial<Post>, userId: number): Observable<Post> {
+    return this.httpClient.post<Post>(`${this.apiDummyUrl}/posts/add`, 
+      {
+        ...post,
+        userId,
+      }
+    );
+  }
+
+  updatePost(id: number, post: Partial<Post>): Observable<Post> {
+    return this.httpClient.put<Post>(`${this.apiDummyUrl}/posts/${id}`, post);
+  }
+
+  deletePost(id: number): Observable<Post> {
+    return this.httpClient.delete<Post>(`${this.apiDummyUrl}/posts/${id}`);
   }
 }

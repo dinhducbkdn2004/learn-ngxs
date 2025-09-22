@@ -3,36 +3,39 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideStore } from '@ngxs/store';
-import { AnimalsState } from './store/animals/animals.state';
 import { CounterState } from './store/counter/counter.state';
 import { withNgxsReduxDevtoolsPlugin } from '@ngxs/devtools-plugin';
 import { TodoState } from './store/todo/todo.state';
 import { withNgxsLoggerPlugin } from '@ngxs/logger-plugin';
 import { UsersState } from './store/users/users.state';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
+import { withNgxsFormPlugin } from '@ngxs/form-plugin';
 import { AuthState } from './store/auth/auth.state';
 import { CartState } from './store/cart/cart.state';
 import { ProductState } from './store/product/product.state';
+import { PostState } from './store/post/post.state';
+import { authInterceptor } from './interceptors/http.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideStore(
       [
-        AnimalsState,
         CounterState,
         TodoState,
         UsersState,
         AuthState,
         CartState,
         ProductState,
+        PostState,
       ],
       withNgxsReduxDevtoolsPlugin(),
-      withNgxsLoggerPlugin()
+      withNgxsLoggerPlugin(),
+      withNgxsFormPlugin()
     ),
-    withNgxsStoragePlugin({ keys: ['auth'] }),
+    withNgxsStoragePlugin({ keys: ['auth', 'cart', 'todo', 'counter'] }),
   ],
 };

@@ -1,5 +1,5 @@
-import { inject, Injectable } from '@angular/core';
-import { State, Action, Selector, StateContext, Store } from '@ngxs/store';
+import { Injectable } from '@angular/core';
+import { State, Action, Selector, StateContext } from '@ngxs/store';
 import {
   AddToCart,
   RemoveFromCart,
