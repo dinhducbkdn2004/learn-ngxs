@@ -40,7 +40,7 @@ export class AuthComponent {
       const formValue = this.loginForm.value;
       const username = formValue.username as string;
       const password = formValue.password as string;
-      
+
       this.store.dispatch(new Login(username, password)).subscribe({
         next: () => {
           this.isLoading.set(false);
@@ -51,10 +51,6 @@ export class AuthComponent {
 
           if (error?.error?.message) {
             this.error.set(error.error.message);
-          } else if (error?.status === 401 || error?.status === 400) {
-            this.error.set('Invalid username or password. Please try again.');
-          } else if (error?.status === 0) {
-            this.error.set('Network error. Please check your connection.');
           } else {
             this.error.set('Login failed. Please try again.');
           }

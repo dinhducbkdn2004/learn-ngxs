@@ -16,10 +16,10 @@ export class UsersComponent implements OnInit {
   users$ = new Observable<User[]>();
   userCount$ = new Observable<number>();
   filteredUsers$!: Observable<User[]>;
-  private searchSubject = new Subject<string>();
-  private destroyRef = inject(DestroyRef);
+  private readonly searchSubject = new Subject<string>();
+  private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private store: Store) {
+  constructor(private readonly store: Store) {
     this.users$ = this.store.select(UsersState.getUsers);
     this.userCount$ = this.store.select(UsersState.usersCount);
     this.filteredUsers$ = this.store.select(UsersState.filteredUsers);

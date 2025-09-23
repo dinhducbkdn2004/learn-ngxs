@@ -16,24 +16,23 @@ import {
 } from '../../store/post/post.actions';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { take } from 'rxjs';
+import { PaginationService } from '../../core/services/pagination.service';
+import { PaginationComponent } from '../../shared/pagination/pagination.component';
 
 @Component({
   selector: 'app-postform',
-  imports: [ReactiveFormsModule, AsyncPipe, CommonModule],
+  imports: [ReactiveFormsModule, AsyncPipe, CommonModule, PaginationComponent],
   templateUrl: './postform.component.html',
   styleUrl: './postform.component.css',
 })
 export class PostformComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly fb = inject(FormBuilder);
+  pagination = inject(PaginationService);
 
   posts$ = this.store.select(PostState.posts);
   currentUser$ = this.store.select(AuthState.user);
   total$ = this.store.select(PostState.total);
-
-  currentPage = signal<number>(1);
-  pageSize = signal<number>(5);
-  totalPages = signal<number>(0);
 
   postForm: FormGroup = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(3)]],
@@ -46,20 +45,25 @@ export class PostformComponent implements OnInit {
 
   ngOnInit() {
     this.loadPosts();
-    this.total$.subscribe((total) =>
-      this.totalPages.set(Math.ceil(total / this.pageSize()))
-    );
+
+    this.total$.subscribe((total) => {
+      this.pagination.setTotal(total || 0);
+    });
   }
 
   loadPosts() {
-    const skip = (this.currentPage() - 1) * this.pageSize();
     this.store.dispatch(
       new LoadPostsPaginated({
-        limit: this.pageSize(),
-        skip,
+        limit: this.pagination.pageSize(),
+        skip: this.pagination.skip(),
         select: 'id,title,body,tags,reactions,views,userId',
       })
     );
+  }
+
+  onPageChange(page: number) {
+    this.pagination.setPage(page);
+    this.loadPosts();
   }
 
   onSubmit() {
@@ -106,19 +110,5 @@ export class PostformComponent implements OnInit {
     this.editingPost.set(null);
     this.isEditing.set(false);
     this.postForm.reset();
-  }
-
-  nextPage() {
-    if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update((p) => p + 1);
-      this.loadPosts();
-    }
-  }
-
-  previousPage() {
-    if (this.currentPage() > 1) {
-      this.currentPage.update((p) => p - 1);
-      this.loadPosts();
-    }
   }
 }

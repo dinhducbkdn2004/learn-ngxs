@@ -21,7 +21,7 @@ export class CounterComponent {
   count$!: Observable<number>;
   addAmount = 0;
 
-  constructor(private store: Store) {
+  constructor(private readonly store: Store) {
     this.count$ = this.store.select(CounterState.getValue);
   }
 
