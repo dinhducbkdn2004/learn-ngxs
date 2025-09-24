@@ -10,11 +10,6 @@ export class RemoveFromCart {
   constructor(public productId: number) {}
 }
 
-export class UpdateQty {
-  static readonly type = '[Cart] Update Qty';
-  constructor(public productId: number, public qty: number) {}
-}
-
 export class ClearCart {
   static readonly type = '[Cart] Clear';
 }

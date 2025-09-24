@@ -9,7 +9,10 @@ import {
   DeletePost,
   LoadPostsByUserId,
   LoadPostsPaginated,
+  ResetPostForm,
+  SetPostFormForEdit,
 } from './post.actions';
+import { UpdateFormValue, ResetForm } from '@ngxs/form-plugin';
 
 export interface PostStateModel {
   posts: Post[];
@@ -17,14 +20,11 @@ export interface PostStateModel {
   loading: boolean;
 
   postForm: {
-    model: {
-      title: string;
-      body: string;
-      tags: string[];
+    model?: {
+      title?: string;
+      body?: string;
+      tags?: string;
     };
-    dirty: boolean;
-    status: string;
-    errors: {};
   };
 }
 
@@ -35,14 +35,7 @@ export interface PostStateModel {
     total: 0,
     loading: false,
     postForm: {
-      model: {
-        title: '',
-        body: '',
-        tags: [],
-      },
-      dirty: false,
-      status: '',
-      errors: {},
+      model: undefined,
     },
   },
 })
@@ -71,7 +64,6 @@ export class PostState {
     return state.posts.reduce((acc, p) => acc + p.reactions.likes, 0);
   }
 
-
   @Action(LoadPostsByUserId)
   loadPosts(ctx: StateContext<PostStateModel>, action: LoadPostsByUserId) {
     ctx.patchState({ loading: true });
@@ -87,7 +79,10 @@ export class PostState {
   }
 
   @Action(LoadPostsPaginated)
-  loadPostsPaginated(ctx: StateContext<PostStateModel>, action: LoadPostsPaginated) {
+  loadPostsPaginated(
+    ctx: StateContext<PostStateModel>,
+    action: LoadPostsPaginated
+  ) {
     ctx.patchState({ loading: true });
     return this.apiService.getAllPosts(action.payload).pipe(
       tap((res) => {
@@ -125,7 +120,7 @@ export class PostState {
     const state = ctx.getState();
     return this.apiService.updatePost(action.id, action.post).pipe(
       tap((updatedPost) => {
-        const posts = state.posts.map(post =>
+        const posts = state.posts.map((post) =>
           post.id === action.id ? { ...post, ...updatedPost } : post
         );
         ctx.patchState({ posts });
@@ -137,11 +132,40 @@ export class PostState {
   deletePost(ctx: StateContext<PostStateModel>, action: DeletePost) {
     const state = ctx.getState();
     return this.apiService.deletePost(action.id).pipe(
-      tap((deletedPost) => {
+      tap(() => {
         ctx.patchState({
-          posts: state.posts.filter(post => post.id !== action.id),
+          posts: state.posts.filter((post) => post.id !== action.id),
           total: state.total - 1,
         });
+      })
+    );
+  }
+
+  @Action(ResetPostForm)
+  resetPostForm(ctx: StateContext<PostStateModel>, action: ResetPostForm) {
+    ctx.dispatch(
+      new ResetForm({
+        path: 'post.postForm',
+        value: action.value || undefined,
+      })
+    );
+  }
+
+  @Action(SetPostFormForEdit)
+  setPostFormForEdit(
+    ctx: StateContext<PostStateModel>,
+    action: SetPostFormForEdit
+  ) {
+    const formValue = {
+      title: action.post.title,
+      body: action.post.body,
+      tags: action.post.tags.join(', '),
+    };
+
+    ctx.dispatch(
+      new UpdateFormValue({
+        path: 'post.postForm',
+        value: formValue,
       })
     );
   }

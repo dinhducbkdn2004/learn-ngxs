@@ -55,7 +55,7 @@
           {{ isEditing() ? 'Edit Post' : 'Create New Post' }}
         </h1>
 
-        <form [formGroup]="postForm" ngxsForm="postForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="postForm" ngxsForm="post.postForm" (ngSubmit)="onSubmit()">
           <div class="mb-4">
             <label for="title" class="block text-gray-700 font-semibold mb-2">Title:</label>
             <input type="text" id="title" formControlName="title"

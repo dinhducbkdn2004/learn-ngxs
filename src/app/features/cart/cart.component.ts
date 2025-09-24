@@ -6,7 +6,6 @@ import {
   AddToCart,
   ClearCart,
   RemoveFromCart,
-  UpdateQty,
 } from '../../store/cart/cart.actions';
 import { AsyncPipe } from '@angular/common';
 import { CartItem } from '../../core/models/cart.model';
@@ -41,11 +40,6 @@ export class CartComponent {
 
   removeFromCart(productId: number) {
     this.store.dispatch(new RemoveFromCart(productId));
-  }
-
-  updateQuantity(productId: number, qty: number) {
-    if (qty < 1) return;
-    this.store.dispatch(new UpdateQty(productId, qty));
   }
 
   clearCart() {

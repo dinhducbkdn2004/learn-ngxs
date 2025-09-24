@@ -13,15 +13,24 @@ import {
   UpdatePost,
   DeletePost,
   LoadPostsPaginated,
+  ResetPostForm,
+  SetPostFormForEdit,
 } from '../../store/post/post.actions';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { take } from 'rxjs';
 import { PaginationService } from '../../core/services/pagination.service';
 import { PaginationComponent } from '../../shared/pagination/pagination.component';
+import { NgxsFormDirective } from '@ngxs/form-plugin';
 
 @Component({
   selector: 'app-postform',
-  imports: [ReactiveFormsModule, AsyncPipe, CommonModule, PaginationComponent],
+  imports: [
+    ReactiveFormsModule,
+    NgxsFormDirective,
+    AsyncPipe,
+    CommonModule,
+    PaginationComponent,
+  ],
   templateUrl: './postform.component.html',
   styleUrl: './postform.component.css',
 })
@@ -89,7 +98,8 @@ export class PostformComponent implements OnInit {
         this.store.dispatch(new AddPost(postData, user?.id || 1));
       });
     }
-    this.postForm.reset();
+
+    this.store.dispatch(new ResetPostForm());
   }
 
   deletePost(id: number) {
@@ -99,16 +109,12 @@ export class PostformComponent implements OnInit {
   editPost(post: any) {
     this.editingPost.set(post.id);
     this.isEditing.set(true);
-    this.postForm.patchValue({
-      title: post.title,
-      body: post.body,
-      tags: post.tags.join(', '),
-    });
+    this.store.dispatch(new SetPostFormForEdit(post));
   }
 
   cancelEdit() {
     this.editingPost.set(null);
     this.isEditing.set(false);
-    this.postForm.reset();
+    this.store.dispatch(new ResetPostForm());
   }
 }

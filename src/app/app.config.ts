@@ -16,12 +16,13 @@ import { CartState } from './store/cart/cart.state';
 import { ProductState } from './store/product/product.state';
 import { PostState } from './store/post/post.state';
 import { authInterceptor } from './interceptors/http.interceptor';
+import { errorInterceptor } from './interceptors/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     provideStore(
       [
         CounterState,

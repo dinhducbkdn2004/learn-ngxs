@@ -1,11 +1,6 @@
 import { Injectable } from '@angular/core';
 import { State, Action, Selector, StateContext } from '@ngxs/store';
-import {
-  AddToCart,
-  RemoveFromCart,
-  UpdateQty,
-  ClearCart,
-} from './cart.actions';
+import { AddToCart, RemoveFromCart, ClearCart } from './cart.actions';
 import { CartItem } from '../../core/models/cart.model';
 
 export interface CartStateModel {
@@ -64,16 +59,6 @@ export class CartState {
     const state = ctx.getState();
     ctx.patchState({
       items: state.items.filter((item) => item.id !== productId),
-    });
-  }
-
-  @Action(UpdateQty)
-  updateQty(ctx: StateContext<CartStateModel>, { productId, qty }: UpdateQty) {
-    const state = ctx.getState();
-    ctx.patchState({
-      items: state.items.map((item) =>
-        item.id === productId ? { ...item, qty } : item
-      ),
     });
   }
 

@@ -5,7 +5,9 @@ export class LoadPostsByUserId {
 
 export class LoadPostsPaginated {
   static readonly type = '[Post] Load Posts Paginated';
-  constructor(public payload: { limit: number; skip: number; select?: string }) {}
+  constructor(
+    public payload: { limit: number; skip: number; select?: string }
+  ) {}
 }
 
 export class AddPost {
@@ -27,4 +29,16 @@ export class UpdatePost {
 export class DeletePost {
   static readonly type = '[Posts] Delete Post';
   constructor(public id: number) {}
+}
+
+export class ResetPostForm {
+  static readonly type = '[Posts] Reset Form';
+  constructor(
+    public value?: { title?: string; body?: string; tags?: string }
+  ) {}
+}
+
+export class SetPostFormForEdit {
+  static readonly type = '[Posts] Set Form For Edit';
+  constructor(public post: { title: string; body: string; tags: string[] }) {}
 }

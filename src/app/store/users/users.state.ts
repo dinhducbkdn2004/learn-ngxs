@@ -33,7 +33,7 @@ export class UsersState {
 
   @Selector()
   static usersCount(state: UsersStateModel) {
-    console.log('state.users.length', state.users.length);
+    console.log('state users length', state.users.length);
     return state.users.length;
   }
 
