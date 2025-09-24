@@ -100,17 +100,17 @@ export class PostState {
     const state = ctx.getState();
     return this.apiService.addPost(action.post, action.userId).pipe(
       tap((newPost) => {
-        const postWithReactions = {
-          ...newPost,
-          reactions: {
-            likes: 0,
-            dislikes: 0,
-          },
-        };
-        ctx.patchState({
-          posts: [...state.posts, postWithReactions],
-          total: state.total + 1,
-        });
+      const postWithReactions = {
+        ...newPost,
+        reactions: {
+        likes: 0,
+        dislikes: 0,
+        },
+      };
+      ctx.patchState({
+        posts: [postWithReactions, ...state.posts],
+        total: state.total + 1,
+      });
       })
     );
   }
