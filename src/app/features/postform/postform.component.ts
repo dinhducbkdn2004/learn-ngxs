@@ -37,7 +37,7 @@ import { NgxsFormDirective } from '@ngxs/form-plugin';
 export class PostformComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly fb = inject(FormBuilder);
-  pagination = inject(PaginationService);
+  private readonly pagination = inject(PaginationService);
 
   posts$ = this.store.select(PostState.posts);
   currentUser$ = this.store.select(AuthState.user);

@@ -17,7 +17,7 @@ export interface ProductStateModel {
 })
 @Injectable()
 export class ProductState {
-  private apiService = inject(ApiService);
+  private readonly apiService = inject(ApiService);
   @Selector()
   static getProducts(state: ProductStateModel) {
     return state.products;

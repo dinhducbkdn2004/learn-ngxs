@@ -24,7 +24,7 @@ export interface UsersStateModel {
 })
 @Injectable()
 export class UsersState {
-  private apiService = inject(ApiService);
+  private readonly apiService = inject(ApiService);
   @Selector()
   static getUsers(state: UsersStateModel) {
     console.log('state.users', state.users);

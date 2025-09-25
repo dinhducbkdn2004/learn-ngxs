@@ -23,7 +23,7 @@ export interface AuthStateModel {
 })
 @Injectable()
 export class AuthState {
-  private apiService = inject(ApiService);
+  private readonly apiService = inject(ApiService);
   @Selector()
   static isAuthenticated(state: AuthStateModel): boolean {
     return state.isAuthenticated;
