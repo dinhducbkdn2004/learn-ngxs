@@ -1,7 +1,6 @@
-import { Todo, TodoState } from '../../store/todo/todo.state';
-import { Component } from '@angular/core';
+import { TodoState } from '../../store/todo/todo.state';
+import { Component, inject } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
 import { AddTodo, RemoveTodo, ToggleTodo } from '../../store/todo/todo.actions';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,12 +13,9 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './todos.component.css',
 })
 export class TodosComponent {
-  todos$!: Observable<Todo[]>;
+  private readonly store = inject(Store);
+  todos$ = this.store.select(TodoState.getState);
   newTodoTitle = '';
-
-  constructor(private readonly store: Store) {
-    this.todos$ = this.store.select(TodoState.getState);
-  }
 
   addTodo() {
     if (this.newTodoTitle.trim()) {

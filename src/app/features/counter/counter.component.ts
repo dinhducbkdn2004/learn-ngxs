@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { CounterState } from './../../store/counter/counter.state';
 import {
@@ -8,7 +8,6 @@ import {
   Reset,
 } from './../../store/counter/counter.actions';
 import { AsyncPipe } from '@angular/common';
-import { Observable } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -18,12 +17,10 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './counter.component.css',
 })
 export class CounterComponent {
-  count$!: Observable<number>;
-  addAmount = 0;
+  private readonly store = inject(Store);
 
-  constructor(private readonly store: Store) {
-    this.count$ = this.store.select(CounterState.getValue);
-  }
+  count$ = this.store.select(CounterState.getValue);
+  addAmount = 0;
 
   increment() {
     this.store.dispatch(new Increment());

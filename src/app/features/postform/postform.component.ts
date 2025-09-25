@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -21,6 +21,7 @@ import { take } from 'rxjs';
 import { PaginationService } from '../../core/services/pagination.service';
 import { PaginationComponent } from '../../shared/pagination/pagination.component';
 import { NgxsFormDirective } from '@ngxs/form-plugin';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-postform',
@@ -37,7 +38,8 @@ import { NgxsFormDirective } from '@ngxs/form-plugin';
 export class PostformComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly fb = inject(FormBuilder);
-  private readonly pagination = inject(PaginationService);
+  private readonly destroyRef = inject(DestroyRef);
+  public readonly pagination = inject(PaginationService);
 
   posts$ = this.store.select(PostState.posts);
   currentUser$ = this.store.select(AuthState.user);
@@ -55,7 +57,7 @@ export class PostformComponent implements OnInit {
   ngOnInit() {
     this.loadPosts();
 
-    this.total$.subscribe((total) => {
+    this.total$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((total) => {
       this.pagination.setTotal(total || 0);
     });
   }
