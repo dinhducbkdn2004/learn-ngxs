@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
-import { State, Action, Selector, StateContext } from '@ngxs/store';
+import { State, Action, StateContext } from '@ngxs/store';
 import { Increment, Decrement, Reset, IncrementBy } from './counter.actions';
-
-export interface CounterStateModel {
-  value: number;
-}
+import { CounterStateModel } from './counter.model';
 
 @State<CounterStateModel>({
   name: 'counter',
@@ -14,11 +11,6 @@ export interface CounterStateModel {
 })
 @Injectable()
 export class CounterState {
-  @Selector()
-  static getValue(state: CounterStateModel): number {
-    return state.value;
-  }
-
   @Action(Increment)
   increment(ctx: StateContext<CounterStateModel>) {
     const state = ctx.getState();

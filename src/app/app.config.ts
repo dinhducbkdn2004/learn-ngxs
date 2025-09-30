@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideStore } from '@ngxs/store';
-import { CounterState } from './store/counter/counter.state';
+import { CounterState } from './store/counter/data-access/counter.state';
 import { withNgxsReduxDevtoolsPlugin } from '@ngxs/devtools-plugin';
 import { TodoState } from './store/todo/todo.state';
 import { withNgxsLoggerPlugin } from '@ngxs/logger-plugin';
@@ -37,6 +37,8 @@ export const appConfig: ApplicationConfig = {
       withNgxsLoggerPlugin(),
       withNgxsFormPlugin()
     ),
-    withNgxsStoragePlugin({ keys: ['auth', 'cart', 'todo', 'counter', 'post'] }),
+    withNgxsStoragePlugin({
+      keys: ['auth', 'cart', 'todo', 'counter', 'post'],
+    }),
   ],
 };

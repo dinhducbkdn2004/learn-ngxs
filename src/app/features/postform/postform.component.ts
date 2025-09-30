@@ -19,7 +19,7 @@ import {
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { take } from 'rxjs';
 import { PaginationService } from '../../core/services/pagination.service';
-import { PaginationComponent } from '../../shared/pagination/pagination.component';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { NgxsFormDirective } from '@ngxs/form-plugin';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 

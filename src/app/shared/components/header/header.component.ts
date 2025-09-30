@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { AuthState } from '../../store/auth/auth.state';
-import { Logout } from '../../store/auth/auth.actions';
+import { AuthState } from '../../../store/auth/auth.state';
+import { Logout } from '../../../store/auth/auth.actions';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
