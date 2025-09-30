@@ -1,37 +1,33 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { debounceTime, Subject } from 'rxjs';
-import { User, UsersState } from '../../store/users/users.state';
-import { Store } from '@ngxs/store';
-import { FetchUsers, SearchUsers } from '../../store/users/users.actions';
-import { AsyncPipe, CommonModule } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { debounceTime } from 'rxjs';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { UsersStore } from '../../store/users/users.signal-store';
 
 @Component({
   selector: 'app-users',
-  imports: [AsyncPipe, CommonModule],
+  standalone: true,
+  providers: [UsersStore],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css',
 })
 export class UsersComponent implements OnInit {
-  private readonly searchSubject = new Subject<string>();
   private readonly destroyRef = inject(DestroyRef);
-  private readonly store = inject(Store);
+  readonly usersStore = inject(UsersStore);
 
-  users$ = this.store.select(UsersState.getUsers);
-  userCount$ = this.store.select(UsersState.usersCount);
-  filteredUsers$ = this.store.select(UsersState.filteredUsers);
+  searchKeyword = signal('');
+
+  constructor() {
+    toObservable(this.searchKeyword)
+      .pipe(debounceTime(900), takeUntilDestroyed(this.destroyRef))
+      .subscribe((keyword) => this.usersStore.search(keyword));
+  }
 
   ngOnInit() {
-    this.store.dispatch(new FetchUsers());
-
-    this.searchSubject
-      .pipe(debounceTime(900), takeUntilDestroyed(this.destroyRef))
-      .subscribe((keyword) => {
-        this.store.dispatch(new SearchUsers(keyword));
-      });
+    this.usersStore.fetchUsers();
   }
 
   onSearch(keyword: string) {
-    this.searchSubject.next(keyword);
+    console.log('Search keyword:', keyword);
+    this.searchKeyword.set(keyword);
   }
 }

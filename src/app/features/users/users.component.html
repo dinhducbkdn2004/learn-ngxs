@@ -1,23 +1,28 @@
 <div class="min-h-screen bg-gray-100 p-8">
     <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 class="text-3xl font-bold mb-6 text-gray-800">Total Users: <span class="text-blue-600">{{ userCount$ |
-                    async }}</span></h2>
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">Total Users: <span class="text-blue-600">{{
+                    usersStore.usersCount() }}</span></h2>
             <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                @for( user of users$ | async; track user.id) {
+                @for( user of usersStore.getUsers(); track user.id) {
                 <li class="bg-gray-50 p-4 rounded-lg text-gray-700">{{ user.name }}</li>
                 }
             </ul>
         </div>
         <div class="bg-white rounded-lg shadow-lg p-6">
             <h2 class="text-3xl font-bold mb-6 text-gray-800">Search Users</h2>
-            <input type="text" placeholder="Search by name..." (input)="onSearch($any($event.target).value)"
+            <input #searchInput type="text" placeholder="Search by name..." (input)="onSearch($any(searchInput.value))"
                 class="w-full border border-gray-300 rounded px-3 py-2 mb-6" />
+            @if (usersStore.filteredUsers().length === 0) {
+            <p class="text-red-500">No users found.</p>
+            } @else {
+            <p class="text-green-500 mb-4">Found {{ usersStore.filteredUsers().length }} user(s).</p>
             <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                @for (user of filteredUsers$ | async; track user.id) {
+                @for (user of usersStore.filteredUsers(); track user.id) {
                 <li class="bg-blue-50 p-4 rounded-lg text-gray-700">{{ user.name }}</li>
                 }
             </ul>
+            }
         </div>
     </div>
 </div>

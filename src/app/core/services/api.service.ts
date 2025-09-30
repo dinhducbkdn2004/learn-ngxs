@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { User } from '../../store/users/users.state';
+import { User } from '../../store/users/data-access/users.model';
 import { Product } from '../models/product.model';
 import { Post } from '../models/post.model';
 

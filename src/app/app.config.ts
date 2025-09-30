@@ -7,7 +7,7 @@ import { CounterState } from './store/counter/data-access/counter.state';
 import { withNgxsReduxDevtoolsPlugin } from '@ngxs/devtools-plugin';
 import { TodoState } from './store/todo/todo.state';
 import { withNgxsLoggerPlugin } from '@ngxs/logger-plugin';
-import { UsersState } from './store/users/users.state';
+import { UsersState } from './store/users/data-access/users.state';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
 import { withNgxsFormPlugin } from '@ngxs/form-plugin';
