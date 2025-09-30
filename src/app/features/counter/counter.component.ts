@@ -4,9 +4,11 @@ import { CounterStore } from '../../store/counter/counter.signal-store';
 
 @Component({
   selector: 'app-counter',
+  standalone: true,
   imports: [FormsModule],
+  providers: [CounterStore],
   templateUrl: './counter.component.html',
-  styleUrl: './counter.component.css',
+  styleUrls: ['./counter.component.css'],
 })
 export class CounterComponent {
   readonly counterStore = inject(CounterStore);
