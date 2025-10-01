@@ -26,7 +26,7 @@ import { ToastrService } from 'ngx-toastr';
 @Injectable()
 export class AuthState {
   private readonly apiService = inject(ApiService);
-  private toastr = inject(ToastrService);
+  private readonly toastr = inject(ToastrService);
 
   @Selector()
   static isAuthenticated(state: AuthStateModel): boolean {

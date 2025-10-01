@@ -34,6 +34,7 @@ import { NgxsFormDirective } from '@ngxs/form-plugin';
 import { Post } from '../../core/models/post.model';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-postform',
@@ -89,7 +90,7 @@ export class PostformComponent implements OnInit {
     });
 
     this.searchControl.valueChanges
-      .pipe(debounceTime(500), distinctUntilChanged())
+      .pipe(debounceTime(500), distinctUntilChanged(), takeUntilDestroyed())
       .subscribe((query) => {
         this.onSearchDebounced(query);
       });
@@ -128,7 +129,6 @@ export class PostformComponent implements OnInit {
   }
 
   onSearchDebounced(query: string | null) {
-    // Reset pagination to page 1 when searching
     this.pagination.setPage(1);
 
     const trimmedQuery = query?.trim();
@@ -157,7 +157,6 @@ export class PostformComponent implements OnInit {
     const order = this.sortOrderControl.value;
     if (!sortBy || !order) return;
 
-    // Reset pagination to page 1 when sorting
     this.pagination.setPage(1);
 
     const params = {
