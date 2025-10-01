@@ -7,10 +7,14 @@ import {
   AddPost,
   UpdatePost,
   DeletePost,
-  LoadPostsByUserId,
-  LoadPostsPaginated,
+  GetPostsByUserId,
+  GetAllPosts,
   ResetPostForm,
   SetPostFormForEdit,
+  GetPostById,
+  GetPostComments,
+  SearchPosts,
+  SortPosts,
 } from './post.actions';
 import { UpdateFormValue, ResetForm } from '@ngxs/form-plugin';
 
@@ -64,25 +68,61 @@ export class PostState {
     return state.posts.reduce((acc, p) => acc + p.reactions.likes, 0);
   }
 
-  @Action(LoadPostsByUserId)
-  loadPosts(ctx: StateContext<PostStateModel>, action: LoadPostsByUserId) {
+  @Selector()
+  static loading(state: PostStateModel) {
+    return state.loading;
+  }
+
+  @Action(GetPostsByUserId)
+  getPostsByUserId(
+    ctx: StateContext<PostStateModel>,
+    action: GetPostsByUserId
+  ) {
     ctx.patchState({ loading: true });
-    return this.apiService.getPostsByUserId(action.userId).pipe(
+    return this.apiService.GetPostsByUserId(action.userId, action.payload).pipe(
       tap((res) => {
         ctx.patchState({
           posts: res.posts,
-          total: res.posts.length,
+          total: res.total,
           loading: false,
         });
       })
     );
   }
 
-  @Action(LoadPostsPaginated)
-  loadPostsPaginated(
-    ctx: StateContext<PostStateModel>,
-    action: LoadPostsPaginated
-  ) {
+  @Action(GetPostById)
+  getPostById(ctx: StateContext<PostStateModel>, action: GetPostById) {
+    ctx.patchState({ loading: true });
+    return this.apiService.getPostById(action.id).pipe(
+      tap((res) => {
+        ctx.patchState({
+          posts: [res],
+          total: 1,
+          loading: false,
+        });
+      })
+    );
+  }
+
+  @Action(GetPostComments)
+  getPostComments(ctx: StateContext<PostStateModel>, action: GetPostComments) {
+    ctx.patchState({ loading: true });
+    return this.apiService.getPostComments(action.postId).pipe(
+      tap((res) => {
+        ctx.patchState({
+          posts: ctx
+            .getState()
+            .posts.map((post) =>
+              post.id === action.postId ? { ...post, comments: res } : post
+            ),
+          loading: false,
+        });
+      })
+    );
+  }
+
+  @Action(GetAllPosts)
+  getAllPosts(ctx: StateContext<PostStateModel>, action: GetAllPosts) {
     ctx.patchState({ loading: true });
     return this.apiService.getAllPosts(action.payload).pipe(
       tap((res) => {
@@ -95,22 +135,53 @@ export class PostState {
     );
   }
 
+  @Action(SearchPosts)
+  searchPosts(ctx: StateContext<PostStateModel>, action: SearchPosts) {
+    ctx.patchState({ loading: true });
+    return this.apiService.searchPosts(action.query, action.payload).pipe(
+      tap((res) => {
+        ctx.patchState({
+          posts: res.posts,
+          total: res.total,
+          loading: false,
+        });
+      })
+    );
+  }
+
+  @Action(SortPosts)
+  sortPosts(ctx: StateContext<PostStateModel>, action: SortPosts) {
+    ctx.patchState({ loading: true });
+    return this.apiService
+      .sortPosts(action.sortBy, action.order, action.payload)
+      .pipe(
+        tap((res) => {
+          ctx.patchState({
+            posts: res.posts,
+            total: res.total,
+            loading: false,
+          });
+        })
+      );
+  }
+
   @Action(AddPost)
   addPost(ctx: StateContext<PostStateModel>, action: AddPost) {
     const state = ctx.getState();
     return this.apiService.addPost(action.post, action.userId).pipe(
       tap((newPost) => {
-      const postWithReactions = {
-        ...newPost,
-        reactions: {
-        likes: 0,
-        dislikes: 0,
-        },
-      };
-      ctx.patchState({
-        posts: [postWithReactions, ...state.posts],
-        total: state.total + 1,
-      });
+        const postWithReactions = {
+          ...newPost,
+          views: 0,
+          reactions: {
+            likes: 0,
+            dislikes: 0,
+          },
+        };
+        ctx.patchState({
+          posts: [postWithReactions, ...state.posts],
+          total: state.total + 1,
+        });
       })
     );
   }

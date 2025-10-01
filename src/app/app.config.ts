@@ -17,12 +17,14 @@ import { ProductState } from './store/product/product.state';
 import { PostState } from './store/post/post.state';
 import { authInterceptor } from './interceptors/http.interceptor';
 import { errorInterceptor } from './interceptors/error.interceptor';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
+    provideAnimationsAsync(),
     provideStore(
       [
         CounterState,

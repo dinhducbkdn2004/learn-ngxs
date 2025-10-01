@@ -29,10 +29,50 @@ export class ApiService {
     );
   }
 
-  getPostsByUserId(userId: number): Observable<{ posts: Post[] }> {
-    return this.httpClient.get<{ posts: Post[] }>(
-      `${this.apiDummyUrl}/posts/user/${userId}`
+  GetPostsByUserId(
+    userId: number,
+    params?: { limit?: number; skip?: number; select?: string }
+  ): Observable<{ posts: Post[]; total: number; skip: number; limit: number }> {
+    const query = new URLSearchParams();
+    if (params?.limit !== undefined)
+      query.append('limit', params.limit.toString());
+    if (params?.skip !== undefined)
+      query.append('skip', params.skip.toString());
+    if (params?.select) query.append('select', params.select);
+    const queryString = query.toString();
+    return this.httpClient.get<{
+      posts: Post[];
+      total: number;
+      skip: number;
+      limit: number;
+    }>(
+      `${this.apiDummyUrl}/posts/user/${userId}${
+        queryString ? '?' + queryString : ''
+      }`
     );
+  }
+
+  getPostById(id: number): Observable<Post> {
+    return this.httpClient.get<Post>(`${this.apiDummyUrl}/posts/${id}`);
+  }
+
+  searchPosts(
+    query: string,
+    params?: { limit?: number; skip?: number; select?: string }
+  ): Observable<{ posts: Post[]; total: number; skip: number; limit: number }> {
+    const urlParams = new URLSearchParams();
+    urlParams.append('q', query);
+    if (params?.limit !== undefined)
+      urlParams.append('limit', params.limit.toString());
+    if (params?.skip !== undefined)
+      urlParams.append('skip', params.skip.toString());
+    if (params?.select) urlParams.append('select', params.select);
+    return this.httpClient.get<{
+      posts: Post[];
+      total: number;
+      skip: number;
+      limit: number;
+    }>(`${this.apiDummyUrl}/posts/search?${urlParams.toString()}`);
   }
 
   getAllPosts(params: {
@@ -56,6 +96,33 @@ export class ApiService {
       skip: number;
       limit: number;
     }>(`${this.apiDummyUrl}/posts?${query.toString()}`);
+  }
+
+  sortPosts(
+    by: string,
+    order: 'asc' | 'desc',
+    params?: { limit?: number; skip?: number; select?: string }
+  ): Observable<{ posts: Post[]; total: number; skip: number; limit: number }> {
+    const urlParams = new URLSearchParams();
+    urlParams.append('sortBy', by);
+    urlParams.append('order', order);
+    if (params?.limit !== undefined)
+      urlParams.append('limit', params.limit.toString());
+    if (params?.skip !== undefined)
+      urlParams.append('skip', params.skip.toString());
+    if (params?.select) urlParams.append('select', params.select);
+    return this.httpClient.get<{
+      posts: Post[];
+      total: number;
+      skip: number;
+      limit: number;
+    }>(`${this.apiDummyUrl}/posts?${urlParams.toString()}`);
+  }
+
+  getPostComments(postId: number): Observable<{ comments: any[] }> {
+    return this.httpClient.get<{ comments: any[] }>(
+      `${this.apiDummyUrl}/posts/${postId}/comments`
+    );
   }
 
   addPost(post: Partial<Post>, userId: number): Observable<Post> {

@@ -1,12 +1,42 @@
-export class LoadPostsByUserId {
+export class GetPostsByUserId {
   static readonly type = '[Posts] Load Posts';
-  constructor(public userId: number) {}
+  constructor(
+    public userId: number,
+    public payload?: { limit?: number; skip?: number; select?: string }
+  ) {}
 }
 
-export class LoadPostsPaginated {
+export class GetPostById {
+  static readonly type = '[Posts] Load Post By Id';
+  constructor(public id: number) {}
+}
+
+export class GetPostComments {
+  static readonly type = '[Posts] Load Post Comments';
+  constructor(public postId: number) {}
+}
+
+export class GetAllPosts {
   static readonly type = '[Post] Load Posts Paginated';
   constructor(
     public payload: { limit: number; skip: number; select?: string }
+  ) {}
+}
+
+export class SearchPosts {
+  static readonly type = '[Posts] Search Posts';
+  constructor(
+    public query: string,
+    public payload?: { limit?: number; skip?: number; select?: string }
+  ) {}
+}
+
+export class SortPosts {
+  static readonly type = '[Posts] Sort Posts';
+  constructor(
+    public sortBy: 'title' | 'views' | 'reactions' | 'userId',
+    public order: 'asc' | 'desc' = 'asc',
+    public payload?: { limit?: number; skip?: number; select?: string }
   ) {}
 }
 
