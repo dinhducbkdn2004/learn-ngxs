@@ -1,13 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AuthState } from '../../store/auth/auth.state';
-import { Store } from '@ngxs/store';
+import { Store, select } from '@ngxs/store';
 import { Login, Logout } from '../../store/auth/auth.actions';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
@@ -22,38 +18,37 @@ export class AuthComponent {
   private readonly router = inject(Router);
 
   loginForm = this.fb.group({
-    username: ['', {nonNullable: true, validators: [Validators.required, Validators.minLength(3)]}],
-    password: ['', {nonNullable: true, validators: [Validators.required, Validators.minLength(6)]}],
+    username: [
+      '',
+      {
+        nonNullable: true,
+        validators: [Validators.required, Validators.minLength(3)],
+      },
+    ],
+    password: [
+      '',
+      {
+        nonNullable: true,
+        validators: [Validators.required, Validators.minLength(6)],
+      },
+    ],
   });
 
-  isAuthenticated$ = this.store.select(AuthState.isAuthenticated);
-  user$ = this.store.select(AuthState.user);
-  error = signal<string | null>(null);
+  isAuthenticated = select(AuthState.isAuthenticated);
+  user = select(AuthState.user);
 
-  isLoading = signal<boolean>(false);
+  authLoading = select(AuthState.authLoading);
+  authError = select(AuthState.authError);
 
   onSubmit() {
     if (this.loginForm.valid) {
-      this.isLoading.set(true);
-      this.error.set(null);
-
       const formValue = this.loginForm.value;
       const username = formValue.username as string;
       const password = formValue.password as string;
 
       this.store.dispatch(new Login(username, password)).subscribe({
         next: () => {
-          this.isLoading.set(false);
           this.router.navigate(['/posts']);
-        },
-        error: (error) => {
-          this.isLoading.set(false);
-
-          if (error?.error?.message) {
-            this.error.set(error.error.message);
-          } else {
-            this.error.set('Login failed. Please try again.');
-          }
         },
       });
     }

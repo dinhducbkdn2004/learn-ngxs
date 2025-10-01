@@ -6,11 +6,6 @@ export class GetPostsByUserId {
   ) {}
 }
 
-export class GetPostById {
-  static readonly type = '[Posts] Load Post By Id';
-  constructor(public id: number) {}
-}
-
 export class GetPostComments {
   static readonly type = '[Posts] Load Post Comments';
   constructor(public postId: number) {}

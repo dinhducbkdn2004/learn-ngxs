@@ -55,7 +55,7 @@ export class PostformComponent implements OnInit {
   posts = select(PostState.posts);
   currentUser = select(AuthState.user);
   total = select(PostState.total);
-  loading = select(PostState.loading);
+  postsLoading = select(PostState.postsLoading);
 
   postForm: FormGroup = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(3)]],

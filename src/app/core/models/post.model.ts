@@ -1,3 +1,5 @@
+import { ApiState } from './base-state.model';
+
 export interface Post {
   id: number;
   title: string;
@@ -9,4 +11,20 @@ export interface Post {
   };
   views: number;
   userId: number;
+}
+
+export interface PostsResponse {
+  posts: Post[];
+  total: number;
+}
+
+export interface PostStateModel {
+  posts: ApiState<PostsResponse>;
+  postForm: {
+    model?: {
+      title?: string;
+      body?: string;
+      tags?: string;
+    };
+  };
 }

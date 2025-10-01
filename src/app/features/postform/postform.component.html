@@ -2,7 +2,6 @@
   <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="md:col-span-2">
       <div class="bg-white border border-gray-200 rounded p-6">
-        <!-- Tab Navigation -->
         <div class="flex border-b border-gray-200 mb-4">
           <button (click)="switchTab('all')" [class.border-b-2]="activeTab() === 'all'"
             [class.border-blue-500]="activeTab() === 'all'" [class.text-blue-600]="activeTab() === 'all'"
@@ -48,7 +47,7 @@
           </div>
         </div>
 
-        @if (loading()) {
+        @if (postsLoading()) {
         <div class="text-center">
           <mat-spinner diameter="35" strokeWidth="2" color="primary"></mat-spinner>
         </div>
@@ -149,7 +148,7 @@
           </div>
 
           <div class="flex space-x-2">
-            <button type="submit" [disabled]="postForm.invalid || loading()"
+            <button type="submit" [disabled]="postForm.invalid || postsLoading()"
               class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed">
               {{ isEditing() ? 'Update Post' : 'Create Post' }}
             </button>

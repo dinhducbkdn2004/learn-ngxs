@@ -1,6 +1,6 @@
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
 import { routes } from './app.routes';
 import { provideStore } from '@ngxs/store';
 import { CounterState } from './store/counter/data-access/counter.state';
@@ -17,14 +17,20 @@ import { ProductState } from './store/product/product.state';
 import { PostState } from './store/post/post.state';
 import { authInterceptor } from './interceptors/http.interceptor';
 import { errorInterceptor } from './interceptors/error.interceptor';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideToastr } from 'ngx-toastr';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
-    provideAnimationsAsync(),
+    provideAnimations(),
+    provideToastr({
+      positionClass: 'toast-bottom-right',
+      timeOut: 3000,
+      preventDuplicates: true,
+      progressBar: true,
+    }),
     provideStore(
       [
         CounterState,
